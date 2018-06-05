@@ -11,9 +11,10 @@
 
 namespace AndyDune\DoctrineMongoOdmExperiments\Documents;
 
+use AndyDune\DateTime\DateTime;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-/** @ODM\Document */
+/** @ODM\Document(collection="users") */
 class User
 {
     /** @ODM\Id */
@@ -21,6 +22,16 @@ class User
 
     /** @ODM\Field(type="string") */
     private $name;
+
+    /** @ODM\Field(type="date", name="datetime_register") */
+    private $datetimeRegister;
+
+    /** @ODM\Field(type="date_andydune", name="datetime_andydune") */
+    private $datetimeAndyDune;
+
+
+    /** @ODM\Field(type="collection") */
+    private $roles;
 
     /** @ODM\Field(type="string") */
     private $email;
@@ -37,12 +48,52 @@ class User
     }
 
     /**
+     * @return DateTime
+     */
+    public function getDatetimeAndyDune() : DateTime
+    {
+        return $this->datetimeAndyDune;
+    }
+
+    /**
+     * @param mixed $datetimeAndyDune
+     */
+    public function setDatetimeAndyDune($datetimeAndyDune): void
+    {
+        $this->datetimeAndyDune = $datetimeAndyDune;
+    }
+
+
+
+    /**
      * @param mixed $name
      */
     public function setName($name): void
     {
         $this->name = $name;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getDatetimeRegister()
+    {
+        return $this->datetimeRegister;
+    }
+
+    /**
+     * @param mixed $datetimeRegister
+     */
+    public function setDatetimeRegister($datetimeRegister = null): User
+    {
+        if (!$datetimeRegister) {
+            $datetimeRegister = time();
+        }
+        $this->datetimeRegister = $datetimeRegister;
+        return $this;
+    }
+
+
 
     /**
      * @return mixed
@@ -55,9 +106,10 @@ class User
     /**
      * @param mixed $email
      */
-    public function setEmail($email): void
+    public function setEmail($email): User
     {
         $this->email = $email;
+        return $this;
     }
 
     /**

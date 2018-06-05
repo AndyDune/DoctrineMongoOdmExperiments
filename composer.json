@@ -23,8 +23,9 @@
         "ext-iconv": "*",
         "andydune/array-container": ">=1.6",
         "andydune/conditional-execution": "^1",
-        "andydune/datetime": "^2",
-        "doctrine/mongodb-odm": "dev-master",
+        "andydune/datetime": "^2.2",
+        "alcaeus/mongo-php-adapter" : "*",
+        "doctrine/mongodb-odm": "^1.2",
         "jmikola/geojson": "^1.0"
     },
     "require-dev": {
@@ -33,7 +34,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "ext-mongo": "1.6.16"
+        }
     },
     "autoload-dev": {
         "psr-4": {
