@@ -1,0 +1,43 @@
+{
+    "description": "Doctrine Experiments",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "mongo",
+        "odm"
+    ],
+    "authors": [
+        {
+            "name": "Andrey Ryzhov",
+            "email": "info@rznw.ru"
+        }
+    ],
+    "homepage": "https://github.com/AndyDune/DoctrineMongoOdmExperiments",
+    "autoload": {
+        "psr-4": {
+            "AndyDune\\DoctrineMongoOdmExperiments\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.1",
+        "ext-iconv": "*",
+        "andydune/array-container": ">=1.6",
+        "andydune/conditional-execution": "^1",
+        "andydune/datetime": "^2",
+        "doctrine/mongodb-odm": "dev-master",
+        "jmikola/geojson": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7.15 || ^6.0.8"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AndyDune\\DoctrineMongoOdmExperimentsTest\\": "test/"
+        }
+    }
+}
