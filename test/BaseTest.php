@@ -51,6 +51,7 @@ class BaseTest extends TestCase
         $user = new User();
         $user->setName('Andrey');
         $user->setEmail('info@rznw.ru');
+        $user->setCount('23');
 
         $time = time();
         $user->setDatetimeRegister((new DateTime($time))->getValue());
@@ -66,6 +67,7 @@ class BaseTest extends TestCase
         /** @var User $user */
         $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
         $this->assertEquals('Andrey', $user->getName());
+        $this->assertEquals(23, $user->getCount());
         $this->assertEquals((new DateTime($time))->getValue(), $user->getDatetimeRegister());
 
         $time1 = time() + 100;
@@ -81,6 +83,13 @@ class BaseTest extends TestCase
         $this->assertEquals((new DateTime($time1))->getValue(), $user->getDatetimeRegister());
         $this->assertEquals((new DateTime($time))->getTimestamp(), $user->getDatetimeAndyDune()->getTimestamp());
 
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('count' => '23'));
+        $this->assertEquals(null, $user);
+        $dm->clear();
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('count' => 23));
+        $this->assertInstanceOf(User::class, $user);
 
 
     }

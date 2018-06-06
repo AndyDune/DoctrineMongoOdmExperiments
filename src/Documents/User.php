@@ -29,6 +29,24 @@ class User
     /** @ODM\Field(type="date_andydune", name="datetime_andydune") */
     private $datetimeAndyDune;
 
+    /**
+     * @return int
+     */
+    public function getCount()
+    {
+        return $this->count;
+    }
+
+    /**
+     * @param mixed $count
+     */
+    public function setCount($count): void
+    {
+        $this->count = $count;
+    }
+
+    /** @var @ODM\Field(type="int") */
+    private $count;
 
     /** @ODM\Field(type="collection") */
     private $roles;
