@@ -84,11 +84,26 @@ class BaseTest extends TestCase
         $this->assertEquals((new DateTime($time))->getTimestamp(), $user->getDatetimeAndyDune()->getTimestamp());
 
 
+        // @todo need type check
         $user = $dm->getRepository(User::class)->findOneBy(array('count' => '23'));
         $this->assertEquals(null, $user);
         $dm->clear();
 
         $user = $dm->getRepository(User::class)->findOneBy(array('count' => 23));
+        $this->assertInstanceOf(User::class, $user);
+
+
+        $query = $dm->createQueryBuilder(User::class);
+        /**
+         *
+         */
+        $result = $query->field('count')->equals(23)->find()->getQuery()->getSingleResult();
+
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('datetime_register' => (new DateTime($time1))->getValue()));
+        $this->assertInstanceOf(User::class, $user);
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('datetime_andydune' => (new DateTime($time))));
         $this->assertInstanceOf(User::class, $user);
 
 
