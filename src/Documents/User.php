@@ -7,6 +7,13 @@
  * | Date: 05.06.2018                            |
  * -----------------------------------------------
  *
+The valid values are:
+    all - cascade all operations by default.
+    detach - cascade detach operation to referenced documents.
+    merge - cascade merge operation to referenced documents.
+    refresh - cascade refresh operation to referenced documents.
+    remove - cascade remove operation to referenced documents.
+    persist - cascade persist operation to referenced documents. *
  */
 
 namespace AndyDune\DoctrineMongoOdmExperiments\Documents;
@@ -29,6 +36,44 @@ class User
     /** @ODM\Field(type="date_andydune", name="datetime_andydune") */
     private $datetimeAndyDune;
 
+    /** @var @ODM\Field(type="int") */
+    private $count;
+
+    /** @ODM\Field(type="collection") */
+    private $roles;
+
+    /** @ODM\Field(type="string") */
+    private $email;
+
+    /** @ODM\ReferenceMany(targetDocument="Posts", cascade="all") */
+    private $posts = array();
+
+    /** @ODM\ReferenceOne(targetDocument="User") */
+    private $wife;
+
+    /** @ODM\ReferenceOne(targetDocument="Home") */
+    private $home;
+
+    /** @ODM\ReferenceOne(targetDocument="Home", cascade={"persist", "remove"}, storeAs="id")*/
+    private $homeHard;
+
+    /**
+     * @return mixed
+     */
+    public function getHomeHard()
+    {
+        return $this->homeHard;
+    }
+
+    /**
+     * @param mixed $homeHard
+     */
+    public function setHomeHard($homeHard): void
+    {
+        $this->homeHard = $homeHard;
+    }
+
+
     /**
      * @return int
      */
@@ -45,17 +90,56 @@ class User
         $this->count = $count;
     }
 
-    /** @var @ODM\Field(type="int") */
-    private $count;
+    /**
+     * @return mixed
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
 
-    /** @ODM\Field(type="collection") */
-    private $roles;
+    /**
+     * @param mixed $roles
+     */
+    public function setRoles($roles): void
+    {
+        $this->roles = $roles;
+    }
 
-    /** @ODM\Field(type="string") */
-    private $email;
+    /**
+     * @return mixed
+     */
+    public function getWife()
+    {
+        return $this->wife;
+    }
 
-    /** @ODM\ReferenceMany(targetDocument="BlogPost", cascade="all") */
-    private $posts = array();
+    /**
+     * @param mixed $wife
+     */
+    public function setWife($wife): void
+    {
+        $this->wife = $wife;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHome()
+    {
+        return $this->home;
+    }
+
+    /**
+     * @param mixed $home
+     */
+    public function setHome($home): void
+    {
+        $this->home = $home;
+    }
+
+
+
 
     /**
      * @return mixed

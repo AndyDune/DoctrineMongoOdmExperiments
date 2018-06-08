@@ -7,11 +7,16 @@
  * | Date: 04.06.2018                            |
  * -----------------------------------------------
  *
+ *
+ * Read to help:
+ * https://phpunit.readthedocs.io/en/7.1/installation.html
  */
 
 
 namespace AndyDune\DoctrineMongoOdmExperimentsTest;
+
 use AndyDune\DateTime\DateTime;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\Home;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
 use AndyDune\DoctrineMongoOdmExperiments\Types\DateAndyDune;
 use Doctrine\MongoDB\Connection;
@@ -23,6 +28,16 @@ use PHPUnit\Framework\TestCase;
 
 class BaseTest extends TestCase
 {
+
+    public function setUp()
+    {
+
+    }
+
+    static public function setUpBeforeClass()
+    {
+        Type::addType('date_andydune', DateAndyDune::class);
+    }
 
     protected function getConnection()
     {
@@ -39,7 +54,7 @@ class BaseTest extends TestCase
         $config->setPersistentCollectionNamespace('PersistentCollections');
 
         $config->setDefaultDB(DOCTRINE_MONGODB_DATABASE);
-        $config->setMetadataDriverImpl(AnnotationDriver::create(__DIR__   . '/../lib/Documents'));
+        $config->setMetadataDriverImpl(AnnotationDriver::create(__DIR__ . '/../lib/Documents'));
 
         $dm = DocumentManager::create(new Connection(DOCTRINE_MONGODB_SERVER), $config);
         return $dm;
@@ -47,7 +62,6 @@ class BaseTest extends TestCase
 
     public function testUserDocument()
     {
-        Type::addType('date_andydune', DateAndyDune::class);
         $user = new User();
         $user->setName('Andrey');
         $user->setEmail('info@rznw.ru');
@@ -58,11 +72,11 @@ class BaseTest extends TestCase
         $user->setDatetimeAndyDune((new DateTime($time)));
 
         $dm = $this->getConnection();
-        $dm->getConnection()->dropDatabase(DOCTRINE_MONGODB_DATABASE);
+//        $dm->getConnection()->dropDatabase(DOCTRINE_MONGODB_DATABASE);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
 
         $dm->persist($user);
         $dm->flush();
-        $dm->clear();
 
         /** @var User $user */
         $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
@@ -103,8 +117,53 @@ class BaseTest extends TestCase
         $user = $dm->getRepository(User::class)->findOneBy(array('datetime_register' => (new DateTime($time1))->getValue()));
         $this->assertInstanceOf(User::class, $user);
 
-        $user = $dm->getRepository(User::class)->findOneBy(array('datetime_andydune' => (new DateTime($time))));
+        $user = $dm->getRepository(User::class)->findOneBy(array('datetime_andydune' => (new DateTime($time))->getValue()));
         $this->assertInstanceOf(User::class, $user);
+        //$this->assertEquals(null, $user);
+    }
+
+    public function testUserReference()
+    {
+        $dm = $this->getConnection();
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'posts')->getMongoCollection()->getCollection()->deleteMany([]);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'homes')->getMongoCollection()->getCollection()->deleteMany([]);
+
+        $user = new User();
+        $dm->persist($user);
+        $user->setName('Andrey');
+        $user->setEmail('info@rznw.ru');
+        $user->setCount('23');
+
+        $home = new Home();
+        $dm->persist($home);
+        $home->setName('Родина');
+
+        $homeH = new Home();
+        $homeH->setName('Ночевка');
+
+        $user->setHomeHard($homeH);
+        $user->setHome($home);
+
+        $dm->flush();
+        $dm->clear();
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
+        $this->assertEquals('Andrey', $user->getName());
+
+        $home = $user->getHome();
+        $this->assertEquals('Родина', $home->getName());
+        $homeH = $user->getHomeHard();
+        $this->assertEquals('Ночевка', $homeH->getName());
+
+        $dm->remove($user);
+        $dm->flush();
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
+        $this->assertEquals(null, $user);
+
+        $home = $dm->getRepository(Home::class)->findOneBy(array('name' => 'Родина'));
+        $this->assertInstanceOf(Home::class, $home);
 
 
     }
