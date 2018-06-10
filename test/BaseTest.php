@@ -16,6 +16,7 @@
 namespace AndyDune\DoctrineMongoOdmExperimentsTest;
 
 use AndyDune\DateTime\DateTime;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Home;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
 use AndyDune\DoctrineMongoOdmExperiments\Types\DateAndyDune;
@@ -54,6 +55,7 @@ class BaseTest extends TestCase
         $config->setPersistentCollectionNamespace('PersistentCollections');
 
         $config->setDefaultDB(DOCTRINE_MONGODB_DATABASE);
+        $config->addDocumentNamespace('Data\Posts', 'AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts');
         $config->setMetadataDriverImpl(AnnotationDriver::create(__DIR__ . '/../lib/Documents'));
 
         $dm = DocumentManager::create(new Connection(DOCTRINE_MONGODB_SERVER), $config);
@@ -164,6 +166,41 @@ class BaseTest extends TestCase
 
         $home = $dm->getRepository(Home::class)->findOneBy(array('name' => 'Родина'));
         $this->assertInstanceOf(Home::class, $home);
+
+        $user = new User();
+        $dm->persist($user);
+        $user->setName('Andrey');
+        $user->setEmail('info@rznw.ru');
+
+        $post = new Posts();
+        $post->setTitle('Статья 1');
+        $user->setPost($post);
+
+        $post = new Posts();
+        $post->setTitle('Статья 2');
+        $user->setPost($post);
+
+        $dm->flush();
+        $dm->clear();
+
+        $user = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 1'));
+        $this->assertEquals(null, $user);
+
+        $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 2'));
+        $this->assertInstanceOf(Posts::class, $home);
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
+        $post = new Posts();
+        $post->setTitle('Статья 1');
+        $user->addPost($post);
+
+        $dm->flush();
+        $dm->clear();
+
+        $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 1'));
+        $this->assertInstanceOf(Posts::class, $home);
+        $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 2'));
+        $this->assertInstanceOf(Posts::class, $home);
 
 
     }

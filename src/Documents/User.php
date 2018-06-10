@@ -45,8 +45,8 @@ class User
     /** @ODM\Field(type="string") */
     private $email;
 
-    /** @ODM\ReferenceMany(targetDocument="Posts", cascade="all") */
-    private $posts = array();
+    /** @ODM\ReferenceMany(targetDocument="AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts", cascade="all", orphanRemoval=true) */
+    private $posts = [];
 
     /** @ODM\ReferenceOne(targetDocument="User") */
     private $wife;
@@ -225,9 +225,17 @@ class User
     /**
      * @param mixed $posts
      */
-    public function setPosts($posts): void
+    public function setPost($posts): void
     {
-        $this->posts = $posts;
+        $this->posts = [$posts];
+    }
+
+    /**
+     * @param mixed $posts
+     */
+    public function addPost($posts): void
+    {
+        $this->posts[] = $posts;
     }
 
 
