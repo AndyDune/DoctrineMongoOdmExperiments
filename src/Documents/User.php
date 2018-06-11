@@ -45,13 +45,26 @@ class User
     /** @ODM\Field(type="string") */
     private $email;
 
-    /** @ODM\ReferenceMany(targetDocument="AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts", cascade="all", orphanRemoval=true) */
+
+    /*
+     *
+     * The storeAs option has the following possible values:
+            dbRefWithDb: Uses a DBRef with $ref, $id, and $db fields
+            dbRef: Uses a DBRef with $ref and $id (this is the default)
+            ref: Uses a custom embedded object with an id field
+            id: Uses the identifier of the referenced object
+    Up until 2.0 storeAs=dbRefWithDb was the default setting. If you have data in the old format, you should add storeAs=dbRefWithDb to all your references,
+     or update the database references (deleting the $db field) as storeAs=dbRef is the new default setting.
+     *
+     */
+
+    /** @ODM\ReferenceMany(targetDocument="AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts", storeAs="dbRef", cascade="all", orphanRemoval=true) */
     private $posts = [];
 
-    /** @ODM\ReferenceOne(targetDocument="User") */
+    /** @ODM\ReferenceOne(targetDocument="User", storeAs="dbRef") */
     private $wife;
 
-    /** @ODM\ReferenceOne(targetDocument="Home") */
+    /** @ODM\ReferenceOne(targetDocument="Home", storeAs="dbRef") */
     private $home;
 
     /** @ODM\ReferenceOne(targetDocument="Home", cascade={"persist", "remove"}, storeAs="id")*/

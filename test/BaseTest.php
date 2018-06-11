@@ -202,6 +202,16 @@ class BaseTest extends TestCase
         $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 2'));
         $this->assertInstanceOf(Posts::class, $home);
 
+        $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
+        $dm->remove($user);
+        $dm->flush();
+
+        $user = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 1'));
+        $this->assertEquals(null, $user);
+
+        $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 2'));
+        $this->assertEquals(null, $home);
+
 
     }
 }
