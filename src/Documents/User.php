@@ -19,7 +19,9 @@ The valid values are:
 namespace AndyDune\DoctrineMongoOdmExperiments\Documents;
 
 use AndyDune\DateTime\DateTime;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Article;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts as DataPosts;
 
 /** @ODM\Document(collection="users") */
 class User
@@ -60,6 +62,12 @@ class User
 
     /** @ODM\ReferenceMany(targetDocument="AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts", storeAs="dbRef", cascade="all", orphanRemoval=true) */
     private $posts = [];
+
+    /** @ODM\ReferenceMany(targetDocument="AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Article",
+          cascade="all",
+          mappedBy="users") */
+    private $articles = [];
+
 
     /** @ODM\ReferenceOne(targetDocument="User", storeAs="dbRef") */
     private $wife;
@@ -236,21 +244,37 @@ class User
     }
 
     /**
-     * @param mixed $posts
+     * @param DataPosts $posts
      */
-    public function setPost($posts): void
+    public function setPost(DataPosts $posts): void
     {
         $this->posts = [$posts];
     }
 
     /**
-     * @param mixed $posts
+     * @param DataPosts $post
      */
-    public function addPost($posts): void
+    public function addPost(DataPosts $post): void
     {
-        $this->posts[] = $posts;
+        $this->posts[] = $post;
     }
 
+
+    /**
+     * @param Article $article
+     */
+    public function setArticle(Article $article): void
+    {
+        $this->articles = [$article];
+    }
+
+    /**
+     * @param Article $post
+     */
+    public function addArticle(Article $article): void
+    {
+        $this->articles[] = $article;
+    }
 
 
 }

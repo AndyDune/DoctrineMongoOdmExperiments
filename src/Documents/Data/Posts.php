@@ -11,9 +11,16 @@
 
 
 namespace AndyDune\DoctrineMongoOdmExperiments\Documents\Data;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-/** @ODM\Document(collection="posts") */
+/**
+ * @ODM\Document(collection="posts")
+ * @ODM\InheritanceType("SINGLE_COLLECTION")
+ * @ODM\DiscriminatorField("type")
+ * @ODM\DiscriminatorMap({"posts"="Posts", "articles"="Article"})
+ * @ODM\DefaultDiscriminatorValue("posts")
+ */
 class Posts
 {
     /** @ODM\Id */

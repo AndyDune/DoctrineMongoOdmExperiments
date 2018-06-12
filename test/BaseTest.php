@@ -16,6 +16,7 @@
 namespace AndyDune\DoctrineMongoOdmExperimentsTest;
 
 use AndyDune\DateTime\DateTime;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Article;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Home;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
@@ -124,7 +125,7 @@ class BaseTest extends TestCase
         //$this->assertEquals(null, $user);
     }
 
-    public function testUserReference()
+    public function _testUserReference()
     {
         $dm = $this->getConnection();
         $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
@@ -189,6 +190,7 @@ class BaseTest extends TestCase
         $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 2'));
         $this->assertInstanceOf(Posts::class, $home);
 
+        /** @var User $user */
         $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
         $post = new Posts();
         $post->setTitle('Статья 1');
@@ -211,7 +213,54 @@ class BaseTest extends TestCase
 
         $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Статья 2'));
         $this->assertEquals(null, $home);
+    }
 
+    public function testInheritanceMapping()
+    {
+        $dm = $this->getConnection();
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'posts')->getMongoCollection()->getCollection()->deleteMany([]);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'homes')->getMongoCollection()->getCollection()->deleteMany([]);
 
+        $user = new User();
+        $dm->persist($user);
+        $user->setName('Andrey');
+        $user->setEmail('info@rznw.ru');
+        $user->setCount('23');
+
+        $post = new Posts();
+        $post->setUser($user);
+        $post->setTitle('Пост 1');
+        $user->setPost($post);
+
+        $article = new Article();
+        $article->setTitle('Статья 1');
+        $article->setUser($user);
+        $user->setArticle($article);
+
+        $dm->flush();
+
+        $home = $dm->getRepository(Posts::class)->findOneBy(array('title' => 'Пост 1'));
+        $this->assertInstanceOf(Posts::class, $home);
+        $home = $dm->getRepository(Article::class)->findOneBy(array('title' => 'Пост 1'));
+        $this->assertEquals(null, $home);
+
+        $home = $dm->getRepository(Article::class)->findOneBy(array('title' => 'Статья 1'));
+        $this->assertInstanceOf(Article::class, $home);
+
+    }
+
+    public function _testManyToOneReference()
+    {
+        $dm = $this->getConnection();
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'posts')->getMongoCollection()->getCollection()->deleteMany([]);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'homes')->getMongoCollection()->getCollection()->deleteMany([]);
+
+        $user = new User();
+        $dm->persist($user);
+        $user->setName('Andrey');
+        $user->setEmail('info@rznw.ru');
+        $user->setCount('23');
     }
 }
