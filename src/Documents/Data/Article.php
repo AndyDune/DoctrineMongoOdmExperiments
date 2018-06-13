@@ -14,12 +14,14 @@
 
 
 namespace AndyDune\DoctrineMongoOdmExperiments\Documents\Data;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+
 
 /** @ODM\Document */
 class Article extends Posts
 {
-    /** @ODM\ReferenceOne(targetDocument="User", inversedBy="article") */
-    private $user;
+    /** @ODM\ReferenceOne(targetDocument="User", inversedBy="articles", storeAs="dbRef") */
+    protected $user;
 
 }

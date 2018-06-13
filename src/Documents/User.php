@@ -276,5 +276,10 @@ class User
         $this->articles[] = $article;
     }
 
+    public function getArticles()
+    {
+        return $this->articles;
+    }
+
 
 }

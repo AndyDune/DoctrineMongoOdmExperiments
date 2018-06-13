@@ -228,6 +228,8 @@ class BaseTest extends TestCase
         $user->setEmail('info@rznw.ru');
         $user->setCount('23');
 
+        $dm->flush();
+
         $post = new Posts();
         $post->setUser($user);
         $post->setTitle('Пост 1');
@@ -247,6 +249,17 @@ class BaseTest extends TestCase
 
         $home = $dm->getRepository(Article::class)->findOneBy(array('title' => 'Статья 1'));
         $this->assertInstanceOf(Article::class, $home);
+
+        $dm->clear();
+
+        $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
+
+        $articles = $user->getArticles();
+        $this->assertCount(1, $articles);
+        foreach ($articles as $article) {
+            $this->assertInstanceOf(Article::class, $article);
+        }
+        $articles = current($articles);
 
     }
 

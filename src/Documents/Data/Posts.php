@@ -24,16 +24,16 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 class Posts
 {
     /** @ODM\Id */
-    private $id;
+    protected $id;
 
     /** @ODM\Field */
-    private $title;
+    protected $title;
 
     /** @ODM\Field */
-    private $body;
+    protected $body;
 
-    /** @ODM\ReferenceOne(targetDocument="User") */
-    private $user;
+    /** @ODM\ReferenceOne(targetDocument="User", storeAs="dbRef") */
+    protected $user;
 
     /**
      * @return mixed
