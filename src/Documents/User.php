@@ -20,8 +20,10 @@ namespace AndyDune\DoctrineMongoOdmExperiments\Documents;
 
 use AndyDune\DateTime\DateTime;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Article;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts as DataPosts;
+use Doctrine\ODM\MongoDB\PersistentCollection;
 
 /** @ODM\Document(collection="users") */
 class User
@@ -69,6 +71,10 @@ class User
     private $articles = [];
 
 
+    /** @ODM\ReferenceMany(targetDocument="UserTestDataOne", mappedBy="user") */
+    private $testDataOne;
+
+
     /** @ODM\ReferenceOne(targetDocument="User", storeAs="dbRef") */
     private $wife;
 
@@ -77,6 +83,11 @@ class User
 
     /** @ODM\ReferenceOne(targetDocument="Home", cascade={"persist", "remove"}, storeAs="id")*/
     private $homeHard;
+
+    public function __construct()
+    {
+        //$this->testDataOne = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -159,9 +170,6 @@ class User
         $this->home = $home;
     }
 
-
-
-
     /**
      * @return mixed
      */
@@ -215,7 +223,6 @@ class User
         $this->datetimeRegister = $datetimeRegister;
         return $this;
     }
-
 
 
     /**
@@ -280,6 +287,39 @@ class User
     {
         return $this->articles;
     }
+
+    /**
+     * @return PersistentCollection
+     */
+    public function getTestDataOne()
+    {
+        return $this->testDataOne;
+    }
+
+    /**
+     * @param mixed $testData
+     */
+    public function setTestDataOne($testData): void
+    {
+        $this->testDataOne = $testData;
+    }
+
+    /**
+     * @param mixed $testData
+     */
+    public function addTestData($testData): void
+    {
+        $this->testData[] = $testData;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
 
 
 }

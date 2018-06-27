@@ -20,11 +20,13 @@ use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Article;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Home;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\UserTestDataOne;
 use AndyDune\DoctrineMongoOdmExperiments\Types\DateAndyDune;
 use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
+use Doctrine\ODM\MongoDB\PersistentCollection;
 use Doctrine\ODM\MongoDB\Types\Type;
 use PHPUnit\Framework\TestCase;
 
@@ -215,7 +217,7 @@ class BaseTest extends TestCase
         $this->assertEquals(null, $home);
     }
 
-    public function testInheritanceMapping()
+    public function _testInheritanceMapping()
     {
         $dm = $this->getConnection();
         $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
@@ -263,17 +265,36 @@ class BaseTest extends TestCase
 
     }
 
-    public function _testManyToOneReference()
+    public function testManyToOneReference()
     {
         $dm = $this->getConnection();
         $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
         $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'posts')->getMongoCollection()->getCollection()->deleteMany([]);
         $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'homes')->getMongoCollection()->getCollection()->deleteMany([]);
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'user_test_data_one')->getMongoCollection()->getCollection()->deleteMany([]);
 
         $user = new User();
         $dm->persist($user);
         $user->setName('Andrey');
         $user->setEmail('info@rznw.ru');
         $user->setCount('23');
+
+        $testData = new UserTestDataOne();
+        $testData->setName('one');
+        $testData->setUser($user);
+        $dm->persist($testData);
+
+        $dm->flush();
+
+        /** @var User $user */
+        $user = $dm->find(User::class, $user->getId());
+        /** @var PersistentCollection $dataOne */
+        $dataOne = $user->getTestDataOne();
+        foreach ($dataOne as $row) {
+            echo $row;
+        }
+        $values = $dataOne->getValues();
+        $array = $dataOne->toArray();
+        $this->assertCount(1, $array);
     }
 }
