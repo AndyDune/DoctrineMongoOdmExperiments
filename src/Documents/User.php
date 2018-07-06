@@ -67,7 +67,7 @@ class User
 
     /** @ODM\ReferenceMany(targetDocument="AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Article",
           cascade="all",
-          mappedBy="users") */
+          mappedBy="user") */
     private $articles = [];
 
 
@@ -86,7 +86,7 @@ class User
 
     public function __construct()
     {
-        //$this->testDataOne = new ArrayCollection();
+        $this->testDataOne = new ArrayCollection();
     }
 
     /**
@@ -307,9 +307,9 @@ class User
     /**
      * @param mixed $testData
      */
-    public function addTestData($testData): void
+    public function addTestDataOne($testData): void
     {
-        $this->testData[] = $testData;
+        $this->testDataOne[] = $testData;
     }
 
     /**

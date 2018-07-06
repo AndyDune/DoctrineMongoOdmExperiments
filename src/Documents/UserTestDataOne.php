@@ -29,6 +29,23 @@ class UserTestDataOne
     /**
      * @return mixed
      */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
@@ -53,7 +70,7 @@ class UserTestDataOne
     /**
      * @param mixed $user
      */
-    public function setUser($user): void
+    public function setUser(User $user): void
     {
         $this->user = $user;
     }

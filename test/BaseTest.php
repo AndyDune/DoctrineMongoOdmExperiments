@@ -286,12 +286,17 @@ class BaseTest extends TestCase
 
         $dm->flush();
 
+        // В кеше хранится старая версия объекта user - к ней не привязан test_data_one
+        $dm->clear();
+
         /** @var User $user */
         $user = $dm->find(User::class, $user->getId());
+
+        $this->assertEquals('Andrey', $user->getName());
         /** @var PersistentCollection $dataOne */
         $dataOne = $user->getTestDataOne();
         foreach ($dataOne as $row) {
-            echo $row;
+            $this->assertInstanceOf(UserTestDataOne::class, $row);
         }
         $values = $dataOne->getValues();
         $array = $dataOne->toArray();
