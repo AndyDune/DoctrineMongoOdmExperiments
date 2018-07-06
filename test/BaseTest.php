@@ -217,7 +217,7 @@ class BaseTest extends TestCase
         $this->assertEquals(null, $home);
     }
 
-    public function _testInheritanceMapping()
+    public function testInheritanceMapping()
     {
         $dm = $this->getConnection();
         $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);

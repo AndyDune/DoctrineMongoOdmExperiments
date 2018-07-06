@@ -21,7 +21,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /** @ODM\Document */
 class Article extends Posts
 {
-    /** @ODM\ReferenceOne(targetDocument="User", inversedBy="articles", storeAs="dbRef") */
+    /** @ODM\ReferenceOne(targetDocument="AndyDune\DoctrineMongoOdmExperiments\Documents\User", inversedBy="articles", storeAs="dbRef") */
     protected $user;
 
 }
