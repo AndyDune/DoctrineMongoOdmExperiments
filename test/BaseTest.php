@@ -19,6 +19,7 @@ use AndyDune\DateTime\DateTime;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Article;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Home;
+use AndyDune\DoctrineMongoOdmExperiments\Documents\Log;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\UserTestDataOne;
 use AndyDune\DoctrineMongoOdmExperiments\Types\DateAndyDune;
@@ -301,5 +302,39 @@ class BaseTest extends TestCase
         $values = $dataOne->getValues();
         $array = $dataOne->toArray();
         $this->assertCount(1, $array);
+    }
+
+    /**
+     * https://www.doctrine-project.org/projects/doctrine-mongodb-odm/en/1.2/reference/capped-collections.html#capped-collections
+     *
+     * Capped collections are fixed sized collections that have a very high performance auto-LRU age-out feature
+     * (age out is based on insertion order).
+
+    In addition, capped collections automatically, with high performance, maintain insertion order for the objects in the collection;
+     * this is very powerful for certain use cases such as logging.
+     */
+    public function testCappedCollections()
+    {
+        $dm = $this->getConnection();
+        $dm->getSchemaManager()->dropDocumentCollection(Log::class);
+        $dm->getSchemaManager()->createDocumentCollection(Log::class);
+
+        $log = new Log();
+        $dm->persist($log);
+
+        $log->name = 'Запись 1';
+        $log->dataTime = new \DateTime();
+
+        $log1 = new Log();
+        $dm->persist($log1);
+
+        $log1->name = 'Запись 2';
+        $log1->dataTime = (new DateTime())->add('+ 1 hour')->getValue();
+
+        $dm->flush();
+
+        $qb = $dm->createQueryBuilder(Log::class);
+        $query = $qb->getQuery();
+        $this->assertEquals(2, $query->count());
     }
 }
