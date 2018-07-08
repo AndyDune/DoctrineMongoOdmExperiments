@@ -28,6 +28,7 @@ use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Doctrine\ODM\MongoDB\PersistentCollection;
+use Doctrine\ODM\MongoDB\Persisters\DocumentPersister;
 use Doctrine\ODM\MongoDB\Types\Type;
 use PHPUnit\Framework\TestCase;
 
@@ -103,6 +104,12 @@ class BaseTest extends TestCase
         $this->assertEquals((new DateTime($time1))->getValue(), $user->getDatetimeRegister());
         $this->assertEquals((new DateTime($time))->getTimestamp(), $user->getDatetimeAndyDune()->getTimestamp());
 
+        $dm->clear();
+
+        $qb = $dm->createQueryBuilder(User::class);
+        $query = $qb->field('name')->equals('Andrey')
+        ->getQuery();
+        $result = $query->getSingleResult();
 
         // @todo need type check
         $user = $dm->getRepository(User::class)->findOneBy(array('count' => '23'));
@@ -126,6 +133,17 @@ class BaseTest extends TestCase
         $user = $dm->getRepository(User::class)->findOneBy(array('datetime_andydune' => (new DateTime($time))->getValue()));
         $this->assertInstanceOf(User::class, $user);
         //$this->assertEquals(null, $user);
+
+        $dm->clear();
+
+        //DocumentPersister::class (956)
+        $qb = $dm->createQueryBuilder(User::class);
+        $query = $qb->field('datetime_andydune')->equals((new DateTime($time))->getValue());
+
+        $query = $qb->getQuery();
+        $result = $query->getSingleResult();
+
+
     }
 
     public function _testUserReference()
