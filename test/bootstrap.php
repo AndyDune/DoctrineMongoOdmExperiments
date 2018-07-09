@@ -9,6 +9,7 @@
  *
  */
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\ODM\MongoDB\Types\Type;
 
 $file = __DIR__ . '/../vendor/autoload.php';
 
@@ -20,3 +21,5 @@ $loader = require $file;
 $loader->add('AndyDune\DoctrineMongoOdmExperimentsTest', __DIR__ . '/../test');
 
 AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+
+Type::addType('date_andydune', \AndyDune\DoctrineMongoOdmExperiments\Types\DateAndyDune::class);

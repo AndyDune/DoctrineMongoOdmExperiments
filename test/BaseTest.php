@@ -42,7 +42,7 @@ class BaseTest extends TestCase
 
     static public function setUpBeforeClass()
     {
-        Type::addType('date_andydune', DateAndyDune::class);
+        //Type::addType('date_andydune', DateAndyDune::class);
     }
 
     protected function getConnection()
