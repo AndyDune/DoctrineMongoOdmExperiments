@@ -88,6 +88,26 @@ class QueryBuilderTest extends TestCase
         $result = $query->getSingleResult();
         $this->assertEquals(null, $result);
 
+        $qb = $dm->createQueryBuilder(User::class);
+        $query = $qb->field('count')->equals('23')
+            ->getQuery();
+        $result = $query->getSingleResult();
+        $this->assertEquals(null, $result);
+
+
+        $result = $dm->getRepository(User::class)->findOneBy(array('count' => '23'));
+        $this->assertEquals(null, $result);
+
+
+        $qb = $dm->createQueryBuilder(User::class);
+        $query = $qb->field('count')->equals(23)
+            ->getQuery();
+        $result = $query->getSingleResult();
+        $this->assertInstanceOf(User::class, $result);
+
+        $result = $dm->getRepository(User::class)->findOneBy(array('count' => 23));
+        $this->assertInstanceOf(User::class, $result);
+
 
         $qb = $dm->createQueryBuilder(User::class);
         $query = $qb->field('name')->equals('Andrey')
