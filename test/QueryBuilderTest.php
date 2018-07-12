@@ -68,7 +68,6 @@ class QueryBuilderTest extends TestCase
 
     public function testSingleResult()
     {
-
         $user = new User();
         $user->setName('Andrey');
         $user->setEmail('info@rznw.ru');
@@ -114,6 +113,45 @@ class QueryBuilderTest extends TestCase
             ->getQuery();
         $result = $query->getSingleResult();
         $this->assertInstanceOf(User::class, $result);
+    }
+
+    public function testSelectingFields()
+    {
+        $user = new User();
+        $user->setName('Andrey');
+        $user->setEmail('info@rznw.ru');
+        $user->setCount('23');
+
+        $time = time();
+
+        $dm = $this->getConnection();
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
+
+        $dm->persist($user);
+        $dm->flush();
+
+        $dm->clear();
+
+        $qb = $dm->createQueryBuilder(User::class)
+            ->select('name' );
+        $query = $qb->getQuery();
+        $users = $query->execute();
+        foreach($users as $user) {
+            $this->assertEquals(null, $user->getCount());
+            $this->assertEquals('Andrey', $user->getName());
+        }
+
+        $dm->clear();
+
+        $qb = $dm->createQueryBuilder(User::class)
+            ->select('count' );
+        $query = $qb->getQuery();
+        $users = $query->execute();
+        foreach($users as $user) {
+            $this->assertEquals(23, $user->getCount());
+            $this->assertEquals(null, $user->getName());
+        }
+
     }
 
 }
