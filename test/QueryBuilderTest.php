@@ -19,6 +19,7 @@ use AndyDune\DoctrineMongoOdmExperiments\Documents\Log;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\User;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\UserTestDataOne;
 use AndyDune\DoctrineMongoOdmExperiments\Types\DateAndyDune;
+use Doctrine\MongoDB\ArrayIterator;
 use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -122,8 +123,6 @@ class QueryBuilderTest extends TestCase
         $user->setEmail('info@rznw.ru');
         $user->setCount('23');
 
-        $time = time();
-
         $dm = $this->getConnection();
         $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
 
@@ -153,5 +152,46 @@ class QueryBuilderTest extends TestCase
         }
 
     }
+    public function testSelectingDistinctValues()
+    {
+        $dm = $this->getConnection();
+        $dm->getConnection()->selectCollection(DOCTRINE_MONGODB_DATABASE, 'users')->getMongoCollection()->getCollection()->deleteMany([]);
+
+
+        $user = new User();
+        $user->setName('Andrey');
+        $user->setEmail('info@rznw.ru');
+        $user->setCount('23');
+        $dm->persist($user);
+
+        $user = new User();
+        $user->setName('Anton');
+        $user->setEmail('info@rznw.ru');
+        $user->setCount('23');
+        $dm->persist($user);
+
+        $dm->flush();
+
+        $dm->clear();
+
+        $qb = $dm->createQueryBuilder(User::class)
+            ->distinct('count' );
+        $query = $qb->getQuery();
+        $users = $query->execute();
+        foreach($users as $user) {
+            $this->assertEquals(23, $user);
+        }
+
+        $qb = $dm->createQueryBuilder(User::class)
+            ->distinct('name' );
+        $query = $qb->getQuery();
+        /** @var ArrayIterator $users */
+        $users = $query->execute();
+        $usersArray = $users->getCommandResult();
+        $this->assertCount(2, $usersArray['values']);
+
+
+    }
+
 
 }
