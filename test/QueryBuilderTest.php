@@ -181,6 +181,8 @@ class QueryBuilderTest extends TestCase
         foreach($users as $user) {
             $this->assertEquals(23, $user);
         }
+        $usersArray = $users->getCommandResult();
+        $this->assertCount(1, $usersArray['values']);
 
         $qb = $dm->createQueryBuilder(User::class)
             ->distinct('name' );
