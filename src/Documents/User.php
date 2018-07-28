@@ -25,7 +25,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use AndyDune\DoctrineMongoOdmExperiments\Documents\Data\Posts as DataPosts;
 use Doctrine\ODM\MongoDB\PersistentCollection;
 
-/** @ODM\Document(collection="users") */
+/** @ODM\Document(collection="users", repositoryClass="AndyDune\DoctrineMongoOdmExperiments\Repository\UserRepository") */
 class User
 {
     /** @ODM\Id */

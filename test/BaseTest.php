@@ -97,6 +97,16 @@ class BaseTest extends TestCase
         $dm->flush();
         $dm->clear();
 
+        $user = $dm->getRepository(User::class)->getUserWithName('Andrey');
+        $this->assertEquals('Andrey', $user->getName());
+
+        $dm->clear();
+
+        $users = $dm->getRepository(User::class)->getUsersAfterAndyDuneDate((new DateTime($time - 3600)));
+        $this->assertCount(1, $users);
+
+        $dm->clear();
+
         $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey1'));
         $this->assertEquals(null, $user);
         $user = $dm->getRepository(User::class)->findOneBy(array('name' => 'Andrey'));
