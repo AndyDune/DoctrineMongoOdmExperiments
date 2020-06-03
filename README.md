@@ -1,5 +1,5 @@
 # DoctrineMongoOdmExperiments
-Documents and experiments.
+Documents and experiments with mongo odm.
 
 ## Documents to read
 
